@@ -1,6 +1,6 @@
 # 注意修改 user 和 ip
 user=mangosteen
-ip=121.196.236.94
+ip=162.14.67.92
 
 time=$(date +'%Y%m%d-%H%M%S')
 cache_dir=tmp/deploy_cache
@@ -33,29 +33,29 @@ title "打包本地依赖 ${vendor_1}"
 bundle cache --quiet
 tar -cz -f "$vendor_dir/cache.tar.gz" -C ./vendor cache
 tar -cz -f "$vendor_dir/$vendor_1.tar.gz" -C ./vendor $vendor_1
-title '打包前端代码'
-mkdir -p $frontend_dir
-rm -rf $frontend_dir/repo
-git clone git@jihulab.com:FrankFang/mangosteen-fe-3.git $frontend_dir/repo
-cd $frontend_dir/repo && pnpm install && pnpm run build; cd -
+# title '打包前端代码'
+# mkdir -p $frontend_dir
+# rm -rf $frontend_dir/repo
+# git clone git@github.com:qiyi-li/miao-fe.git $frontend_dir/repo
+# cd $frontend_dir/repo && pnpm install && pnpm run build; cd -
 tar -cz -f "$frontend_dir/dist.tar.gz" -C "$frontend_dir/repo/dist" .
 title '创建远程目录'
 ssh $user@$ip "mkdir -p $deploy_dir/vendor"
 title '上传源代码和依赖'
 scp $dist $user@$ip:$deploy_dir/
-yes | rm $dist
+# yes | rm $dist
 scp $gemfile $user@$ip:$deploy_dir/
 scp $gemfile_lock $user@$ip:$deploy_dir/
 scp -r $vendor_dir/cache.tar.gz $user@$ip:$deploy_dir/vendor/
 yes | rm $vendor_dir/cache.tar.gz
 scp -r $vendor_dir/$vendor_1.tar.gz $user@$ip:$deploy_dir/vendor/
 yes | rm $vendor_dir/$vendor_1.tar.gz
-title '上传前端代码'
-scp "$frontend_dir/dist.tar.gz" $user@$ip:$deploy_dir/
-yes | rm -rf $frontend_dir
+# title '上传前端代码'
+# scp "$frontend_dir/dist.tar.gz" $user@$ip:$deploy_dir/
+# yes | rm -rf $frontend_dir
 title '上传 Dockerfile'
 scp $current_dir/../config/host.Dockerfile $user@$ip:$deploy_dir/Dockerfile
-scp $current_dir/../config/nginx.default.conf $user@$ip:$deploy_dir/
+# scp $current_dir/../config/nginx.default.conf $user@$ip:$deploy_dir/
 title '上传 setup 脚本'
 scp $current_dir/setup_remote.sh $user@$ip:$deploy_dir/
 title '上传 API 文档'
